@@ -3,7 +3,7 @@ import Logo from "../Logo/Logo";
 
 const Footer = () => {
   return (
-    <div>
+    <div className="px-2 md:px-6">
       <footer className="footer footer-horizontal rounded-3xl footer-center bg-black text-primary-content p-10 my-2">
         <aside>
           <Logo></Logo>
