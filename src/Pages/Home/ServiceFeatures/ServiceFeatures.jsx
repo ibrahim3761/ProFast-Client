@@ -26,7 +26,7 @@ const ServiceFeatures = () => {
   ];
 
   return (
-    <div className="px-4 md:px-12 py-12 bg-base-200 rounded-lg space-y-6">
+    <div className="px-4 md:px-12 py-12 rounded-lg space-y-6">
       {features.map((feature, index) => (
         <div
           key={index}
@@ -35,10 +35,10 @@ const ServiceFeatures = () => {
           <img
             src={feature.image}
             alt={feature.title}
-            className="w-32 h-32 object-contain"
+            className="w-38 h-48 object-contain"
           />
           {/* Dashed Divider */}
-          <div className="hidden md:block h-24 border-l border-dashed border-neutral/40"></div>
+          <div className="hidden md:block h-36 border-l border-dashed border-neutral/40"></div>
 
           <div>
             <h3 className="text-xl font-extrabold text-[#03373D">

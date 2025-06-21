@@ -50,7 +50,7 @@ const services = [
 
 const OurServices = () => {
   return (
-    <section className="py-12 px-4 md:px-10 bg-[#00363A] text-white my-4 rounded-2xl">
+    <section className="py-12 px-4 md:px-10 bg-[#03373D] text-white my-4 rounded-2xl">
       <div className="max-w-6xl mx-auto text-center">
         <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Services</h2>
         <p className="mb-10 max-w-3xl mx-auto text-gray-300 text-sm">
