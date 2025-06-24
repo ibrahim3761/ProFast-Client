@@ -3,11 +3,14 @@ import { useForm } from "react-hook-form";
 import { Link } from "react-router";
 
 const Login = () => {
-    const {register, handleSubmit} = useForm();
-    const onSubmit = data =>{
-        console.log(data);
-        
-    }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const onSubmit = (data) => {
+    console.log(data);
+  };
   return (
     <div>
       <h2 className="text-4xl font-extrabold mb-6">Welcome Back</h2>
@@ -16,7 +19,8 @@ const Login = () => {
         <div>
           <label className="label">Email</label>
           <input
-            type="email" {...register('email')}
+            type="email"
+            {...register("email")}
             className="input input-bordered w-full"
             placeholder="Email"
           />
@@ -24,10 +28,24 @@ const Login = () => {
         <div>
           <label className="label">Password</label>
           <input
-            type="password" {...register('password',{required:true ,minLength:6},{pattern: /^[A-Za-z]+$/i})}
+            type="password"
+            {...register(
+              "password",
+              { required: true, minLength: 6,pattern: /^(?=.*[A-Z]).*$/ }
+            )}
             className="input input-bordered w-full"
             placeholder="Password"
           />
+          {errors.password?.type === "required" && 
+            <p className="text-red-500">Password is required</p>
+          }
+          {errors.password?.type === "minLength" && 
+            <p className="text-red-500">Password must be 6 characters or longer </p>
+          }
+          {
+            errors.password?.type === "pattern" && 
+            <p className="text-red-500">Password must contain at least one uppercase letter </p>
+          }
         </div>
         <div className="text-left mb-5">
           <a className="text-sm text-[#71717A] border-b border-[#71717A] pb-[2px] hover:text-[#CAEB66] hover:border-[#CAEB66] cursor-pointer">
