@@ -1,6 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
+import useAuth from "../../../Hooks/useAuth.JSX";
 
 const Login = () => {
   const {
@@ -8,8 +9,21 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+  const { signInWithGoogle } = useAuth();
+
   const onSubmit = (data) => {
     console.log(data);
+  };
+
+  const handleGoogleLogin = () => {
+    signInWithGoogle()
+      .then((result) => {
+        console.log("User logged in successfully:", result.user);
+      })
+      .catch((error) => {
+        console.error("Error logging in with Google:", error.message);
+      });
   };
   return (
     <div>
@@ -29,23 +43,27 @@ const Login = () => {
           <label className="label">Password</label>
           <input
             type="password"
-            {...register(
-              "password",
-              { required: true, minLength: 6,pattern: /^(?=.*[A-Z]).*$/ }
-            )}
+            {...register("password", {
+              required: true,
+              minLength: 6,
+              pattern: /^(?=.*[A-Z]).*$/,
+            })}
             className="input input-bordered w-full"
             placeholder="Password"
           />
-          {errors.password?.type === "required" && 
+          {errors.password?.type === "required" && (
             <p className="text-red-500">Password is required</p>
-          }
-          {errors.password?.type === "minLength" && 
-            <p className="text-red-500">Password must be 6 characters or longer </p>
-          }
-          {
-            errors.password?.type === "pattern" && 
-            <p className="text-red-500">Password must contain at least one uppercase letter </p>
-          }
+          )}
+          {errors.password?.type === "minLength" && (
+            <p className="text-red-500">
+              Password must be 6 characters or longer{" "}
+            </p>
+          )}
+          {errors.password?.type === "pattern" && (
+            <p className="text-red-500">
+              Password must contain at least one uppercase letter{" "}
+            </p>
+          )}
         </div>
         <div className="text-left mb-5">
           <a className="text-sm text-[#71717A] border-b border-[#71717A] pb-[2px] hover:text-[#CAEB66] hover:border-[#CAEB66] cursor-pointer">
@@ -60,7 +78,7 @@ const Login = () => {
           </Link>
         </div>
         <div className="divider">OR</div>
-        <button className="btn btn-outline w-full">
+        <button onClick={handleGoogleLogin} className="btn btn-outline w-full">
           <svg
             aria-label="Google logo"
             width="16"

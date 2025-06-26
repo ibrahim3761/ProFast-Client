@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import { FaUserCircle } from "react-icons/fa";
 import { useForm } from "react-hook-form";
+import useAuth from "../../../Hooks/useAuth.JSX";
 
 const Register = () => {
   const {
@@ -10,11 +11,30 @@ const Register = () => {
     formState: { errors },
   } = useForm();
 
+  const {createUser,signInWithGoogle} = useAuth();
+
   const onSubmit = (data) => {
     console.log(data);
+    createUser(data.email, data.password)
+      .then((result) => {
+        console.log("User created successfully:", result.user);
+      })
+      .catch((error) => {
+        console.error("Error creating user:", error.message);
+      });
+  };
+
+  const handleGoogleLogin = () => {
+    signInWithGoogle()
+      .then((result) => {
+        console.log("User logged in successfully:", result.user);
+      })
+      .catch((error) => {
+        console.error("Error logging in with Google:", error.message);
+      });
   };
   return (
-    <div>
+    <div className="lg:mt-12">
       <h2 className="text-4xl font-extrabold mb-2">Create an Account</h2>
       <p className="text-lg text-black mb-6">Register with Profast</p>
 
@@ -89,7 +109,7 @@ const Register = () => {
 
         <div className="divider">Or</div>
 
-        <button className="btn btn-outline w-full">
+        <button onClick={handleGoogleLogin} className="btn btn-outline w-full">
           <svg
             aria-label="Google logo"
             width="16"
