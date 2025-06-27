@@ -1,6 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import useAuth from "../../../Hooks/useAuth.JSX";
 
 const Login = () => {
@@ -10,16 +10,27 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
-  const { signInWithGoogle } = useAuth();
+  const { signInWithGoogle, signIn } = useAuth();
+   const navigate = useNavigate();
+  const location = useLocation();
 
   const onSubmit = (data) => {
-    console.log(data);
-  };
+  signIn(data.email, data.password)
+    .then((result) => {
+      console.log("User logged in successfully:", result.user);
+      navigate(`${location.state ? location.state : "/"}`);
+    })
+    .catch((error) => {
+      console.error("Login failed:", error.message);
+      // Optional: Show toast or Swal alert
+    });
+};
 
   const handleGoogleLogin = () => {
     signInWithGoogle()
       .then((result) => {
         console.log("User logged in successfully:", result.user);
+        navigate(`${location.state ? location.state : "/"}`);
       })
       .catch((error) => {
         console.error("Error logging in with Google:", error.message);

@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { FaUserCircle } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import useAuth from "../../../Hooks/useAuth.JSX";
@@ -12,12 +12,15 @@ const Register = () => {
   } = useForm();
 
   const {createUser,signInWithGoogle} = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const onSubmit = (data) => {
     console.log(data);
     createUser(data.email, data.password)
       .then((result) => {
         console.log("User created successfully:", result.user);
+        navigate(`${location.state ? location.state : "/"}`);
       })
       .catch((error) => {
         console.error("Error creating user:", error.message);
@@ -28,6 +31,7 @@ const Register = () => {
     signInWithGoogle()
       .then((result) => {
         console.log("User logged in successfully:", result.user);
+        navigate(`${location.state ? location.state : "/"}`);
       })
       .catch((error) => {
         console.error("Error logging in with Google:", error.message);

@@ -7,39 +7,59 @@ import Register from "../Pages/Authentication/Register/Register";
 import Coverage from "../Pages/Coverage/Coverage";
 import PrivateRoutes from "../Routes/PrivateRoutes";
 import SendParcel from "../Pages/SendParcel/SendParcel";
+import DashboardLayout from "../Layouts/DashboardLayout";
+import MyParcels from "../Pages/Dashboard/MyParcels/MyParcels";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     Component: RootLayout,
-    children:[
-        {
-            index: true,
-            Component: Home
-        },
-        {
-          path: 'coverage',
-          Component: Coverage,
-          loader: () => fetch('../../public/serviceCenter.json')
-        },
-        {
-          path: 'sendParcel',
-          element: <PrivateRoutes><SendParcel></SendParcel></PrivateRoutes>
-        }
-    ]
-  },
-  {
-    path:'/',
-    Component: AuthLayout,
-    children:[
+    children: [
       {
-        path: 'login',
-        Component: Login
+        index: true,
+        Component: Home,
       },
       {
-        path : 'register',
-        Component: Register
-      }
-    ]
+        path: "coverage",
+        Component: Coverage,
+        loader: () => fetch("../../public/serviceCenter.json"),
+      },
+      {
+        path: "sendParcel",
+        element: (
+          <PrivateRoutes>
+            <SendParcel></SendParcel>
+          </PrivateRoutes>
+        ),
+      },
+    ],
+  },
+  {
+    path: "/",
+    Component: AuthLayout,
+    children: [
+      {
+        path: "login",
+        Component: Login,
+      },
+      {
+        path: "register",
+        Component: Register,
+      },
+    ],
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <PrivateRoutes>
+        <DashboardLayout></DashboardLayout>
+      </PrivateRoutes>
+    ),
+    children: [
+    {
+      path: 'myparcels',
+      Component: MyParcels
+    }
+  ],
   },
 ]);

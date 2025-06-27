@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import useAuth from "../../Hooks/useAuth";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
 
 const generateTrackingID = () => {
   const date = new Date();
@@ -11,8 +12,8 @@ const generateTrackingID = () => {
 };
 
 const SendParcel = () => {
-
-  const {user} = useAuth()
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
 
   const {
     register,
@@ -23,14 +24,15 @@ const SendParcel = () => {
   } = useForm();
 
   const [serviceCentersData, setServiceCentersData] = useState([]);
-  const [filteredSenderAreas, setFilteredSenderAreas] = useState([]);
-  const [filteredReceiverAreas, setFilteredReceiverAreas] = useState([]);
+  const [filteredSenderDistricts, setFilteredSenderDistricts] = useState([]);
+  const [filteredReceiverDistricts, setFilteredReceiverDistricts] = useState(
+    []
+  );
 
   const senderRegion = watch("sender_region");
   const receiverRegion = watch("receiver_region");
   const parcelType = watch("type");
 
-  // Load data from public/serviceCenter.json
   useEffect(() => {
     fetch("/serviceCenter.json")
       .then((res) => res.json())
@@ -38,37 +40,32 @@ const SendParcel = () => {
       .catch((err) => console.error("Failed to load service centers:", err));
   }, []);
 
-  // Filter sender areas
+  // Filter sender districts
   useEffect(() => {
     if (senderRegion) {
       const centers = serviceCentersData.filter(
         (center) => center.region === senderRegion
       );
-      const areas = [
-        ...new Set(centers.flatMap((center) => center.covered_area)),
-      ];
-      setFilteredSenderAreas(areas);
+      const districts = [...new Set(centers.map((center) => center.district))];
+      setFilteredSenderDistricts(districts);
     } else {
-      setFilteredSenderAreas([]);
+      setFilteredSenderDistricts([]);
     }
   }, [senderRegion, serviceCentersData]);
 
-  // Filter receiver areas
+  // Filter receiver districts
   useEffect(() => {
     if (receiverRegion) {
       const centers = serviceCentersData.filter(
         (center) => center.region === receiverRegion
       );
-      const areas = [
-        ...new Set(centers.flatMap((center) => center.covered_area)),
-      ];
-      setFilteredReceiverAreas(areas);
+      const districts = [...new Set(centers.map((center) => center.district))];
+      setFilteredReceiverDistricts(districts);
     } else {
-      setFilteredReceiverAreas([]);
+      setFilteredReceiverDistricts([]);
     }
   }, [receiverRegion, serviceCentersData]);
 
-  // Cost calculation
   const calculateCost = (type, weight, senderDistrict, receiverDistrict) => {
     const isSameDistrict = senderDistrict === receiverDistrict;
     const parsedWeight = parseFloat(weight) || 0;
@@ -78,8 +75,8 @@ const SendParcel = () => {
       return {
         total: cost,
         breakdown: [
-          { label: "Base cost (Document)", amount: isSameDistrict ? 60 : 80 },
-          { label: "Same district?", amount: isSameDistrict ? 60 : 80 },
+          { label: "Base cost (Document)", amount: cost },
+          { label: "Same district?", amount: cost },
         ],
       };
     }
@@ -92,9 +89,9 @@ const SendParcel = () => {
           breakdown: [
             {
               label: "Base cost (Non-document, ≤ 3kg)",
-              amount: isSameDistrict ? 110 : 150,
+              amount: cost,
             },
-            { label: "Same district?", amount: isSameDistrict ? 110 : 150 },
+            { label: "Same district?", amount: cost },
           ],
         };
       } else {
@@ -108,13 +105,13 @@ const SendParcel = () => {
         return {
           total: cost,
           breakdown: [
-            { label: "Base cost (Non-document, first 3kg)", amount: baseCost },
+            { label: "Base cost (first 3kg)", amount: baseCost },
             {
               label: `Extra weight (${extraWeight} kg × 40)`,
               amount: extraWeightCost,
             },
             !isSameDistrict && {
-              label: "Additional out-of-district charge",
+              label: "Out-of-district surcharge",
               amount: 40,
             },
           ].filter(Boolean),
@@ -129,11 +126,10 @@ const SendParcel = () => {
     const { total: cost, breakdown } = calculateCost(
       data.type,
       data.weight,
-      data.sender_center,
-      data.receiver_center
+      data.sender_district,
+      data.receiver_district
     );
 
-    // Create a formatted HTML string for the breakdown
     const breakdownHtml = breakdown
       .map(
         (item) =>
@@ -149,8 +145,8 @@ const SendParcel = () => {
       html: `<div style="text-align:left; margin-top:10px;">${breakdownHtml}</div><br>Do you want to confirm this parcel?`,
       icon: "info",
       showCancelButton: true,
-      confirmButtonText:'<span>💳 Proceed to Payment</span>',
-      cancelButtonText: '<span>✏️ Keep Editing</span>'
+      confirmButtonText: "<span>💳 Proceed to Payment</span>",
+      cancelButtonText: "<span>✏️ Keep Editing</span>",
     });
 
     if (result.isConfirmed) {
@@ -161,17 +157,31 @@ const SendParcel = () => {
         payment_status: "unpaid",
         delivery_status: "not_collected",
         creation_date: new Date().toISOString(),
-        tracking_id: generateTrackingID()
+        tracking_id: generateTrackingID(),
       };
 
-      console.log("Saving to DB:", parcelWithDate);
-      Swal.fire("Success!", "Your parcel has been booked.", "success");
-      reset();
+      axiosSecure.post("/parcels", parcelWithDate).then((res) => {
+        console.log("Server response:", res.data);
+        if (res.data.insertedId) {
+          Swal.fire({
+            title: "Redirecting...",
+            text: "Redirecting to the payment gateway...",
+            icon: "info",
+            timer: 2000,
+            showConfirmButton: false,
+          }).then(() => {
+            // TODP:
+            // Replace with your payment route or logic
+            // Example: navigate(`/payment/${res.data.insertedId}`);
+          });
+        }
+        reset();
+      });
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-base-100 rounded-xl shadow-md">
+    <div className="max-w-4xl mx-auto p-6 bg-base-100 rounded-xl shadow-md my-10">
       <h2 className="text-2xl font-bold mb-2">Add Parcel</h2>
       <p className="text-sm text-gray-500 mb-6">
         Fill in the details to book your parcel.
@@ -265,13 +275,13 @@ const SendParcel = () => {
           </select>
 
           <select
-            {...register("sender_center", { required: true })}
+            {...register("sender_district", { required: true })}
             className="select select-bordered w-full"
           >
-            <option value="">Select Area</option>
-            {filteredSenderAreas.map((area, idx) => (
-              <option key={idx} value={area}>
-                {area}
+            <option value="">Select District</option>
+            {filteredSenderDistricts.map((district, idx) => (
+              <option key={idx} value={district}>
+                {district}
               </option>
             ))}
           </select>
@@ -318,13 +328,13 @@ const SendParcel = () => {
           </select>
 
           <select
-            {...register("receiver_center", { required: true })}
+            {...register("receiver_district", { required: true })}
             className="select select-bordered w-full"
           >
-            <option value="">Select Area</option>
-            {filteredReceiverAreas.map((area, idx) => (
-              <option key={idx} value={area}>
-                {area}
+            <option value="">Select District</option>
+            {filteredReceiverDistricts.map((district, idx) => (
+              <option key={idx} value={district}>
+                {district}
               </option>
             ))}
           </select>

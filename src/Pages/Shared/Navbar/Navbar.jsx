@@ -42,6 +42,22 @@ const Navbar = () => {
         Send Parcel
       </NavLink>
     </li>
+    {
+      user && <>
+        <li>
+      <NavLink
+        to="/dashboard"
+        className={({ isActive }) =>
+          isActive
+            ? "bg-[#CAEB66] text-black font-semibold rounded-full px-4 py-2"
+            : "px-4 py-2"
+        }
+      >
+        Dashboard
+      </NavLink>
+    </li>
+      </>
+    }
     <li>
       <NavLink
         to="/coverage"
