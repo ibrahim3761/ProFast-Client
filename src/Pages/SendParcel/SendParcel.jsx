@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import useAuth from "../../Hooks/useAuth";
 import useAxiosSecure from "../../Hooks/useAxiosSecure";
+import { useNavigate } from "react-router";
 
 const generateTrackingID = () => {
   const date = new Date();
@@ -11,9 +12,12 @@ const generateTrackingID = () => {
   return `PCL-${datePart}-${rand}`;
 };
 
+
+
 const SendParcel = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -172,7 +176,7 @@ const SendParcel = () => {
           }).then(() => {
             // TODP:
             // Replace with your payment route or logic
-            // Example: navigate(`/payment/${res.data.insertedId}`);
+            navigate('/dashboard/myparcels');
           });
         }
         reset();
