@@ -4,11 +4,12 @@ import { FaEye, FaMoneyBill, FaTrash } from "react-icons/fa";
 import Swal from "sweetalert2";
 import useAuth from "../../../Hooks/useAuth";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import { useNavigate } from "react-router";
 
 const MyParcels = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
-
+  const navigate = useNavigate()
   const { data: parcels = [], refetch } = useQuery({
     queryKey: ["my-parcels", user?.email],
     queryFn: async () => {
@@ -44,6 +45,8 @@ const MyParcels = () => {
   };
 
   const handlePay = (parcel) => {
+    console.log(parcel);
+    
     Swal.fire({
       title: "Redirecting to Payment Gateway",
       text: `Pay ৳${parcel.cost} for parcel ${parcel.tracking_id}`,
@@ -54,7 +57,7 @@ const MyParcels = () => {
 
     setTimeout(() => {
       console.log(`Redirecting for parcel ID: ${parcel._id}`);
-      // navigate(`/payment/${parcel._id}`);
+      navigate(`/dashboard/payment/${parcel._id}`);
     }, 2000);
   };
 
