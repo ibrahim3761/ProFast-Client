@@ -1,6 +1,13 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router";
 import Logo from "../Pages/Shared/Logo/Logo";
+import {
+  MdHome,
+  MdLocalShipping,
+  MdPayment,
+  MdTrackChanges,
+  MdPerson,
+} from "react-icons/md";
 
 const DashboardLayout = () => {
   return (
@@ -44,10 +51,29 @@ const DashboardLayout = () => {
           {/* Sidebar content here */}
           <Logo></Logo>
           <li>
-            <a>Home</a>
+            <NavLink to="/">
+              <MdHome className="inline mr-2" /> Home
+            </NavLink>
           </li>
           <li>
-            <NavLink to='/dashboard/myparcels'>My Parcels</NavLink>
+            <NavLink to="/dashboard/myparcels">
+              <MdLocalShipping className="inline mr-2" /> My Parcels
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/dashboard/paymetnHistory">
+              <MdPayment className="inline mr-2" /> Payment History
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/dashboard/track">
+              <MdTrackChanges className="inline mr-2" /> Parcel Tracking
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/dashboard/profile">
+              <MdPerson className="inline mr-2" /> Update Profile
+            </NavLink>
           </li>
         </ul>
       </div>
