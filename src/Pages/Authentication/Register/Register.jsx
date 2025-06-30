@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { FaUserCircle } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import useAuth from "../../../Hooks/useAuth.JSX";
+import axios from "axios";
 
 const Register = () => {
   const {
@@ -11,15 +12,31 @@ const Register = () => {
     formState: { errors },
   } = useForm();
 
-  const {createUser,signInWithGoogle} = useAuth();
+  const {createUser,signInWithGoogle, updateUserProfile} = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [profilePic,setProfilePic] = useState('')
 
   const onSubmit = (data) => {
     console.log(data);
     createUser(data.email, data.password)
       .then((result) => {
         console.log("User created successfully:", result.user);
+
+        // update user profile in firebase
+        const userProfile ={
+          displayName: data.name,
+          photoURL: profilePic
+        }
+        updateUserProfile(userProfile)
+        .then(()=>{
+          console.log('profile name pic updated');
+        })
+        .catch((error)=>{
+          console.log(error.message);
+          
+        })
         navigate(`${location.state ? location.state : "/"}`);
       })
       .catch((error) => {
@@ -37,6 +54,18 @@ const Register = () => {
         console.error("Error logging in with Google:", error.message);
       });
   };
+
+  const handleImageUpload = async(e) =>{
+    const image = e.target.files[0]
+    console.log(image);
+    const formData = new FormData();
+    formData.append('image',image)
+
+    const res = await axios.post(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_upload_key}`,formData)
+
+    setProfilePic(res.data.data.url);
+    
+  }
   return (
     <div className="lg:mt-12">
       <h2 className="text-4xl font-extrabold mb-2">Create an Account</h2>
@@ -56,6 +85,16 @@ const Register = () => {
             type="text"
             {...register("name", { required: true })}
             placeholder="Name"
+            className="input input-bordered w-full"
+          />
+        </div>
+        {/* Pic field */}
+        <div>
+          <label className="label">Name</label>
+          <input
+          onChange={handleImageUpload}
+            type="file"
+            placeholder="Your Profile Piv"
             className="input input-bordered w-full"
           />
         </div>
