@@ -42,7 +42,7 @@ const PendingRider = () => {
         // Wait for modal to fully close before showing alert
         requestAnimationFrame(() => {
           setTimeout(() => {
-            Swal.fire("Updated!", `Rider has been ${status}ed.`, "success");
+            Swal.fire("Updated!", `Rider has been ${status}ted.`, "success");
             refetch();
           }, 150); // 100–150ms is typically enough
         });
@@ -132,7 +132,7 @@ const PendingRider = () => {
           <div className="modal-action">
             <button
               className="btn btn-success"
-              onClick={() => handleStatusChange(selectedRider._id, "accepted")}
+              onClick={() => handleStatusChange(selectedRider._id, "active")}
             >
               Accept
             </button>
