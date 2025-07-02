@@ -4,6 +4,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import useAuth from "../../../Hooks/useAuth.JSX";
 import axios from "axios";
+import useAxios from "../../../Hooks/useAxios";
 
 const Register = () => {
   const {
@@ -15,15 +16,27 @@ const Register = () => {
   const {createUser,signInWithGoogle, updateUserProfile} = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const axiosInstance = useAxios();
 
   const [profilePic,setProfilePic] = useState('')
 
   const onSubmit = (data) => {
     console.log(data);
     createUser(data.email, data.password)
-      .then((result) => {
+      .then(async(result) => {
         console.log("User created successfully:", result.user);
 
+        // update user in the database
+        const userInfo ={
+          email: data.email,
+          role: 'user', //default role
+          created_at: new Date().toISOString(),
+          last_log_in: new Date().toISOString()
+        }
+
+        const userRes = await axiosInstance.post('/users',userInfo)
+        console.log(userRes.data);
+        
         // update user profile in firebase
         const userProfile ={
           displayName: data.name,
@@ -46,8 +59,17 @@ const Register = () => {
 
   const handleGoogleLogin = () => {
     signInWithGoogle()
-      .then((result) => {
+      .then(async(result) => {
         console.log("User logged in successfully:", result.user);
+        // update user in the database
+        const userInfo ={
+          email: result.user.email,
+          role: 'user', //default role
+          created_at: new Date().toISOString(),
+          last_log_in: new Date().toISOString()
+        }
+        const userRes = await axiosInstance.post('/users',userInfo)
+        console.log(userRes.data);
         navigate(`${location.state ? location.state : "/"}`);
       })
       .catch((error) => {

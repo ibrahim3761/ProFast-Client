@@ -2,6 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router";
 import useAuth from "../../../Hooks/useAuth.JSX";
+import useAxios from "../../../Hooks/useAxios";
 
 const Login = () => {
   const {
@@ -12,6 +13,7 @@ const Login = () => {
 
   const { signInWithGoogle, signIn } = useAuth();
    const navigate = useNavigate();
+   const axiosInstance = useAxios();
   const location = useLocation();
 
   const onSubmit = (data) => {
@@ -28,8 +30,17 @@ const Login = () => {
 
   const handleGoogleLogin = () => {
     signInWithGoogle()
-      .then((result) => {
+      .then(async(result) => {
         console.log("User logged in successfully:", result.user);
+        // update user in the database
+         const userInfo ={
+          email: result.user.email,
+          role: 'user', //default role
+          created_at: new Date().toISOString(),
+          last_log_in: new Date().toISOString()
+        }
+        const userRes = await axiosInstance.post('/users',userInfo)
+        console.log('user update info',userRes.data);
         navigate(`${location.state ? location.state : "/"}`);
       })
       .catch((error) => {
