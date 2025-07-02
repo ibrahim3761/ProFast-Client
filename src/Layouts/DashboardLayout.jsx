@@ -7,6 +7,8 @@ import {
   MdPayment,
   MdTrackChanges,
   MdPerson,
+  MdCheckCircle,
+  MdHourglassEmpty,
 } from "react-icons/md";
 
 const DashboardLayout = () => {
@@ -73,6 +75,16 @@ const DashboardLayout = () => {
           <li>
             <NavLink to="/dashboard/profile">
               <MdPerson className="inline mr-2" /> Update Profile
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/dashboard/accepted-riders">
+              <MdCheckCircle className="inline mr-2" /> Accepted Riders
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/dashboard/pending-riders">
+              <MdHourglassEmpty className="inline mr-2" /> Pending Riders
             </NavLink>
           </li>
         </ul>

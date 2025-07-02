@@ -12,7 +12,7 @@ import MyParcels from "../Pages/Dashboard/MyParcels/MyParcels";
 import Payment from "../Pages/Dashboard/Payment/Payment";
 import PaymentHistory from "../Pages/Dashboard/PaymentHistory/PaymentHistory";
 import TrackParcel from "../Pages/Dashboard/TrackParcel/TrackParcel";
-import BeARider from "../Pages/Dashboard/BeARider/BeARider";
+import BeARider from "../Pages/BeARider/BeARider";
 
 export const router = createBrowserRouter([
   {

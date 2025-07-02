@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import riderimage from "../../../assets/agent-pending.png";
+import riderimage from "../../assets/agent-pending.png";
 import { useForm } from "react-hook-form";
-import useAuth from "../../../Hooks/useAuth.JSX";
+import useAuth from "../../Hooks/useAuth.JSX";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
+
 
 const BeARider = () => {
   const { user } = useAuth();
@@ -12,6 +14,8 @@ const BeARider = () => {
     watch,
     formState: { errors },
   } = useForm();
+
+  const axiosSecure = useAxiosSecure();
 
   const [serviceCentersData, setServiceCentersData] = useState([]);
   const [filteredWarehouses, setFilteredWarehouses] = useState([]);
@@ -36,16 +40,23 @@ const BeARider = () => {
   }, [selectedRegion, serviceCentersData]);
 
   const onSubmit = (data) => {
-    console.log("Rider Data:", data);
+    const riderData = {
+      ...data,
+      status: "pending",
+      created_at: new Date().toISOString(),
+    };
+    console.log("Rider Data:", riderData);
 
-    Swal.fire({
-      icon: "success",
-      title: "Success!",
-      text: "Your form is submitted.",
-      confirmButtonText: "OK",
+    axiosSecure.post("/riders", riderData).then((res) => {
+      if (res.data.insertedId) {
+        Swal.fire({
+          icon: "success",
+          title: "Application submitted!",
+          text: "Your application is pending",
+          confirmButtonText: "OK",
+        });
+      }
     });
-
-    // You can add your backend submission here if needed
   };
 
   return (
