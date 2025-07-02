@@ -96,7 +96,7 @@ const Navbar = () => {
     </li>
     <li className="lg:hidden">
       <NavLink
-        to="/rider-info"
+        to="/beARider"
         className={({ isActive }) =>
           isActive
             ? "bg-[#CAEB66] text-black font-semibold rounded-full px-4 py-2"
@@ -138,9 +138,9 @@ const Navbar = () => {
               </li>
             </ul>
           </div>
-          <Link to="/" className="ml-4">
+          <span className="ml-4">
             <Logo />
-          </Link>
+          </span>
         </div>
 
         {/* Center nav items */}
@@ -170,7 +170,7 @@ const Navbar = () => {
 
           {/* Be a rider: visible on lg+ only */}
           <Link
-            to="/be-a-rider"
+            to="/beARider"
             className="btn bg-[#CAEB66] text-black font-semibold rounded-full px-5 min-h-[2.5rem] h-10 hidden lg:inline-flex"
           >
             Be a rider
