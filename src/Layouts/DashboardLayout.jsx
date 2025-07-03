@@ -10,6 +10,7 @@ import {
   MdCheckCircle,
   MdHourglassEmpty,
   MdAdminPanelSettings,
+  MdDirectionsBike,
 } from "react-icons/md";
 import useUserRole from "../Hooks/useUserRole";
 
@@ -82,8 +83,13 @@ const DashboardLayout = () => {
               <MdPerson className="inline mr-2" /> Update Profile
             </NavLink>
           </li>
-          { !isLoading && role ==='admin' &&
+          {!isLoading && role === "admin" && (
             <>
+              <li>
+                <NavLink to="/dashboard/assign-rider">
+                  <MdDirectionsBike className="inline mr-2" /> Assign Rider
+                </NavLink>
+              </li>
               <li>
                 <NavLink to="/dashboard/accepted-riders">
                   <MdCheckCircle className="inline mr-2" /> Accepted Riders
@@ -100,7 +106,7 @@ const DashboardLayout = () => {
                 </NavLink>
               </li>
             </>
-          }
+          )}
         </ul>
       </div>
     </div>

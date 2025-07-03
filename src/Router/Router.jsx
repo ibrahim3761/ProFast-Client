@@ -18,6 +18,7 @@ import AcceptedRiders from "../Pages/Dashboard/AcceptedRiders/AcceptedRiders";
 import ManageAdmins from "../Pages/Dashboard/MangeAdmins/ManageAdmins";
 import Forbidden from "../Pages/Forbidden/Forbidden";
 import AdminRoutes from "../Routes/AdminRoutes";
+import AssignRider from "../Pages/Dashboard/AssignRider/AssignRider";
 
 export const router = createBrowserRouter([
   {
@@ -100,6 +101,10 @@ export const router = createBrowserRouter([
       {
         path: 'manage-admins',
         element: <AdminRoutes><ManageAdmins></ManageAdmins></AdminRoutes>
+      },
+      {
+        path: 'assign-rider',
+        element: <AdminRoutes><AssignRider></AssignRider></AdminRoutes>
       }
     ],
   },
