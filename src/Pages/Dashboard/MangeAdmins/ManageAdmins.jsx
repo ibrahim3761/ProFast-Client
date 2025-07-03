@@ -1,18 +1,19 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 const ManageAdmins = () => {
   const axiosSecure = useAxiosSecure();
   const [searchEmail, setSearchEmail] = useState("");
   const [queryEmail, setQueryEmail] = useState("");
 
+  // Fetch users by email
   const {
     data: users = [],
     isLoading,
-    refetch,
     isError,
+    refetch,
   } = useQuery({
     queryKey: ["user-search", queryEmail],
     queryFn: async () => {
@@ -24,21 +25,30 @@ const ManageAdmins = () => {
     retry: false,
   });
 
+  // Mutation to change role
+  const {
+    mutate: changeUserRole,
+    isPending: isMutating,
+  } = useMutation({
+    mutationFn: async ({ id, role }) => {
+      const res = await axiosSecure.patch(`/users/${id}/role`, { role });
+      return { ...res.data, role };
+    },
+    onSuccess: (data) => {
+      if (data.modifiedCount > 0) {
+        Swal.fire("Success", `User role updated to ${data.role}`, "success");
+        refetch();
+      }
+    },
+    onError: () => {
+      Swal.fire("Error", "Failed to update role", "error");
+    },
+  });
+
+  // Trigger search
   const handleSearch = () => {
     if (searchEmail.trim()) {
       setQueryEmail(searchEmail.trim());
-    }
-  };
-
-  const handleRoleChange = async (id, role) => {
-    try {
-      const res = await axiosSecure.patch(`/users/${id}/role`, { role });
-      if (res.data.modifiedCount > 0) {
-        Swal.fire("Success", `User role updated to ${role}`, "success");
-        refetch();
-      }
-    } catch (error) {
-      Swal.fire("Error", "Failed to update role", "error");
     }
   };
 
@@ -86,14 +96,20 @@ const ManageAdmins = () => {
                 {user.role !== "admin" ? (
                   <button
                     className="btn btn-success btn-sm"
-                    onClick={() => handleRoleChange(user._id, "admin")}
+                    disabled={isMutating}
+                    onClick={() =>
+                      changeUserRole({ id: user._id, role: "admin" })
+                    }
                   >
                     Make Admin
                   </button>
                 ) : (
                   <button
                     className="btn btn-error btn-sm"
-                    onClick={() => handleRoleChange(user._id, "user")}
+                    disabled={isMutating}
+                    onClick={() =>
+                      changeUserRole({ id: user._id, role: "user" })
+                    }
                   >
                     Remove Admin
                   </button>

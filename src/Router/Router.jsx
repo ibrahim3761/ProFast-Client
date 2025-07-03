@@ -16,6 +16,8 @@ import BeARider from "../Pages/BeARider/BeARider";
 import PendingRider from "../Pages/Dashboard/PendingRiders/PendingRIder";
 import AcceptedRiders from "../Pages/Dashboard/AcceptedRiders/AcceptedRiders";
 import ManageAdmins from "../Pages/Dashboard/MangeAdmins/ManageAdmins";
+import Forbidden from "../Pages/Forbidden/Forbidden";
+import AdminRoutes from "../Routes/AdminRoutes";
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +27,10 @@ export const router = createBrowserRouter([
       {
         index: true,
         Component: Home,
+      },
+      {
+        path:"forbidden",
+        Component: Forbidden
       },
       {
         path: "coverage",
@@ -85,15 +91,15 @@ export const router = createBrowserRouter([
       },
       {
         path: "pending-riders",
-        Component: PendingRider
+        element: <AdminRoutes><PendingRider></PendingRider></AdminRoutes>
       },
       {
         path: "accepted-riders",
-        Component: AcceptedRiders
+        element: <AdminRoutes><AcceptedRiders></AcceptedRiders></AdminRoutes>
       },
       {
         path: 'manage-admins',
-        Component: ManageAdmins
+        element: <AdminRoutes><ManageAdmins></ManageAdmins></AdminRoutes>
       }
     ],
   },

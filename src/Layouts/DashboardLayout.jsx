@@ -9,10 +9,14 @@ import {
   MdPerson,
   MdCheckCircle,
   MdHourglassEmpty,
-  MdAdminPanelSettings
+  MdAdminPanelSettings,
 } from "react-icons/md";
+import useUserRole from "../Hooks/useUserRole";
 
 const DashboardLayout = () => {
+  const { role, isLoading } = useUserRole();
+  console.log(role);
+
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
@@ -78,21 +82,25 @@ const DashboardLayout = () => {
               <MdPerson className="inline mr-2" /> Update Profile
             </NavLink>
           </li>
-          <li>
-            <NavLink to="/dashboard/accepted-riders">
-              <MdCheckCircle className="inline mr-2" /> Accepted Riders
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/dashboard/pending-riders">
-              <MdHourglassEmpty className="inline mr-2" /> Pending Riders
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/dashboard/manage-admins">
-              <MdAdminPanelSettings className="inline mr-2" /> Manage Admins
-            </NavLink>
-          </li>
+          { !isLoading && role ==='admin' &&
+            <>
+              <li>
+                <NavLink to="/dashboard/accepted-riders">
+                  <MdCheckCircle className="inline mr-2" /> Accepted Riders
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/dashboard/pending-riders">
+                  <MdHourglassEmpty className="inline mr-2" /> Pending Riders
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/dashboard/manage-admins">
+                  <MdAdminPanelSettings className="inline mr-2" /> Manage Admins
+                </NavLink>
+              </li>
+            </>
+          }
         </ul>
       </div>
     </div>
