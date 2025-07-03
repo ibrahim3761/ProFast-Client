@@ -24,7 +24,7 @@ const PendingRider = () => {
     document.getElementById("riderModal").showModal();
   };
 
-  const handleStatusChange = async (id, status) => {
+  const handleStatusChange = async (id, status,email) => {
     // Close the modal immediately
     const modal = document.getElementById("riderModal");
     modal.close();
@@ -37,9 +37,8 @@ const PendingRider = () => {
 
     if (confirm.isConfirmed) {
       try {
-        await axiosSecure.patch(`/riders/${id}`, { status });
-
-        // Wait for modal to fully close before showing alert
+        await axiosSecure.patch(`/riders/${id}`, { status, email });
+        
         requestAnimationFrame(() => {
           setTimeout(() => {
             Swal.fire("Updated!", `Rider has been ${status}ted.`, "success");
@@ -132,13 +131,13 @@ const PendingRider = () => {
           <div className="modal-action">
             <button
               className="btn btn-success"
-              onClick={() => handleStatusChange(selectedRider._id, "active")}
+              onClick={() => handleStatusChange(selectedRider._id, "active",selectedRider.email)}
             >
               Accept
             </button>
             <button
               className="btn btn-error"
-              onClick={() => handleStatusChange(selectedRider._id, "cancelled")}
+              onClick={() => handleStatusChange(selectedRider._id, "cancelled", selectedRider.email)}
             >
               Reject
             </button>

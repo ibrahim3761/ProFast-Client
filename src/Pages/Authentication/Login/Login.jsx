@@ -12,35 +12,45 @@ const Login = () => {
   } = useForm();
 
   const { signInWithGoogle, signIn } = useAuth();
-   const navigate = useNavigate();
-   const axiosInstance = useAxios();
+  const navigate = useNavigate();
+  const axiosInstance = useAxios();
   const location = useLocation();
 
   const onSubmit = (data) => {
-  signIn(data.email, data.password)
-    .then((result) => {
-      console.log("User logged in successfully:", result.user);
-      navigate(`${location.state ? location.state : "/"}`);
-    })
-    .catch((error) => {
-      console.error("Login failed:", error.message);
-      // Optional: Show toast or Swal alert
-    });
-};
-
-  const handleGoogleLogin = () => {
-    signInWithGoogle()
+    signIn(data.email, data.password)
       .then(async(result) => {
         console.log("User logged in successfully:", result.user);
         // update user in the database
-         const userInfo ={
-          email: result.user.email,
-          role: 'user', //default role
+        const userInfo = {
+          email: data.email,
+          role: "user", //default role
           created_at: new Date().toISOString(),
-          last_log_in: new Date().toISOString()
-        }
-        const userRes = await axiosInstance.post('/users',userInfo)
-        console.log('user update info',userRes.data);
+          last_log_in: new Date().toISOString(),
+        };
+        console.log(userInfo);
+        const userRes = await axiosInstance.post("/users", userInfo);
+        console.log(userRes.data);
+        navigate(`${location.state ? location.state : "/"}`);
+      })
+      .catch((error) => {
+        console.error("Login failed:", error.message);
+        // Optional: Show toast or Swal alert
+      });
+  };
+
+  const handleGoogleLogin = () => {
+    signInWithGoogle()
+      .then(async (result) => {
+        console.log("User logged in successfully:", result.user);
+        // update user in the database
+        const userInfo = {
+          email: result.user.email,
+          role: "user", //default role
+          created_at: new Date().toISOString(),
+          last_log_in: new Date().toISOString(),
+        };
+        const userRes = await axiosInstance.post("/users", userInfo);
+        console.log("user update info", userRes.data);
         navigate(`${location.state ? location.state : "/"}`);
       })
       .catch((error) => {

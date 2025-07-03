@@ -33,7 +33,8 @@ const Register = () => {
           created_at: new Date().toISOString(),
           last_log_in: new Date().toISOString()
         }
-
+        console.log(userInfo);
+        
         const userRes = await axiosInstance.post('/users',userInfo)
         console.log(userRes.data);
         
