@@ -15,6 +15,7 @@ import TrackParcel from "../Pages/Dashboard/TrackParcel/TrackParcel";
 import BeARider from "../Pages/BeARider/BeARider";
 import PendingRider from "../Pages/Dashboard/PendingRiders/PendingRIder";
 import AcceptedRiders from "../Pages/Dashboard/AcceptedRiders/AcceptedRiders";
+import ManageAdmins from "../Pages/Dashboard/MangeAdmins/ManageAdmins";
 
 export const router = createBrowserRouter([
   {
@@ -89,6 +90,10 @@ export const router = createBrowserRouter([
       {
         path: "accepted-riders",
         Component: AcceptedRiders
+      },
+      {
+        path: 'manage-admins',
+        Component: ManageAdmins
       }
     ],
   },

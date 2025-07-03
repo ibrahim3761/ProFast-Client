@@ -9,6 +9,7 @@ import {
   MdPerson,
   MdCheckCircle,
   MdHourglassEmpty,
+  MdAdminPanelSettings
 } from "react-icons/md";
 
 const DashboardLayout = () => {
@@ -85,6 +86,11 @@ const DashboardLayout = () => {
           <li>
             <NavLink to="/dashboard/pending-riders">
               <MdHourglassEmpty className="inline mr-2" /> Pending Riders
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/dashboard/manage-admins">
+              <MdAdminPanelSettings className="inline mr-2" /> Manage Admins
             </NavLink>
           </li>
         </ul>
