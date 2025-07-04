@@ -40,6 +40,7 @@ const AssignRider = () => {
     try {
       await axiosSecure.patch(`/parcels/${selectedParcel._id}/assign`, {
         riderId: rider._id,
+        riderEmail: rider.email,
         riderName: rider.name,
       });
       Swal.fire("Success", "Rider assigned successfully", "success");

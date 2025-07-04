@@ -11,6 +11,7 @@ import {
   MdHourglassEmpty,
   MdAdminPanelSettings,
   MdDirectionsBike,
+  MdPending,
 } from "react-icons/md";
 import useUserRole from "../Hooks/useUserRole";
 
@@ -83,6 +84,17 @@ const DashboardLayout = () => {
               <MdPerson className="inline mr-2" /> Update Profile
             </NavLink>
           </li>
+          {/* rider links */}
+          {!isLoading && role === "rider" && (
+            <>
+              <li>
+                <NavLink to="/dashboard/pending-deliveries">
+                  <MdPending className="inline mr-2" /> Pending Deliveries
+                </NavLink>
+              </li>
+            </>
+          )}
+          {/* admin links */}
           {!isLoading && role === "admin" && (
             <>
               <li>
