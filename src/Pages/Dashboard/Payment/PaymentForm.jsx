@@ -107,7 +107,7 @@ const PaymentForm = () => {
             position: "top-end",
           });
 
-          navigate("/dashboard/my-parcels"); // 👈 Immediately redirect
+          navigate("/dashboard/myparcels"); // 👈 Immediately redirect
         } else {
           Swal.fire({
             icon: "error",

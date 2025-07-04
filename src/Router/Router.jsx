@@ -92,6 +92,7 @@ export const router = createBrowserRouter([
         path: "track",
         Component: TrackParcel,
       },
+      // admin only routes
       {
         path: "pending-riders",
         element: <AdminRoutes><PendingRider></PendingRider></AdminRoutes>
@@ -108,6 +109,7 @@ export const router = createBrowserRouter([
         path: 'assign-rider',
         element: <AdminRoutes><AssignRider></AssignRider></AdminRoutes>
       },
+      // rider only routes
       {
         path: 'pending-deliveries',
         element: <RiderRoutes><PendingDeliveries></PendingDeliveries></RiderRoutes>
