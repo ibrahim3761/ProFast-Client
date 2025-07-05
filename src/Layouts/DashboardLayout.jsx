@@ -12,6 +12,7 @@ import {
   MdAdminPanelSettings,
   MdDirectionsBike,
   MdPending,
+  MdDone
 } from "react-icons/md";
 import useUserRole from "../Hooks/useUserRole";
 
@@ -90,6 +91,11 @@ const DashboardLayout = () => {
               <li>
                 <NavLink to="/dashboard/pending-deliveries">
                   <MdPending className="inline mr-2" /> Pending Deliveries
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/dashboard/completed-deliveries">
+                  <MdDone className="inline mr-2" /> Completed Deliveries
                 </NavLink>
               </li>
             </>

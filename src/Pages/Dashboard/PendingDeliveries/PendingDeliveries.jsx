@@ -31,7 +31,7 @@ const PendingDeliveries = () => {
     },
     onSuccess: (data) => {
       Swal.fire("Success", data.message, "success");
-      refetch(); // Refresh data after update
+      refetch();
     },
     onError: () => {
       Swal.fire("Error", "Failed to update parcel status", "error");
@@ -39,7 +39,21 @@ const PendingDeliveries = () => {
   });
 
   const handleStatusChange = (parcelId, newStatus) => {
-    mutation.mutate({ parcelId, newStatus });
+    const actionLabel =
+      newStatus === "in_transit" ? "mark as Picked Up" : "mark as Delivered";
+
+    Swal.fire({
+      title: `Confirm ${actionLabel}?`,
+      text: `Are you sure you want to ${actionLabel.toLowerCase()} this parcel?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, confirm",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        mutation.mutate({ parcelId, newStatus });
+      }
+    });
   };
 
   return (
