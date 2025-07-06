@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import useAxiosSecure from "../../Hooks/useAxiosSecure";
 import { useNavigate } from "react-router";
 import useAuth from "../../Hooks/useAuth.JSX";
+import useTrackingLogger from "../../Hooks/useTrackingLogger";
 
 const generateTrackingID = () => {
   const date = new Date();
@@ -12,13 +13,11 @@ const generateTrackingID = () => {
   return `PCL-${datePart}-${rand}`;
 };
 
-
-
 const SendParcel = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
-
+  const logTracking = useTrackingLogger();
   const {
     register,
     handleSubmit,
@@ -154,6 +153,7 @@ const SendParcel = () => {
     });
 
     if (result.isConfirmed) {
+      const tracking_id = generateTrackingID();
       const parcelWithDate = {
         ...data,
         cost,
@@ -161,23 +161,27 @@ const SendParcel = () => {
         payment_status: "unpaid",
         delivery_status: "not_collected",
         creation_date: new Date().toISOString(),
-        tracking_id: generateTrackingID(),
+        tracking_id: tracking_id,
       };
 
-      axiosSecure.post("/parcels", parcelWithDate).then((res) => {
+      axiosSecure.post("/parcels", parcelWithDate).then(async (res) => {
         console.log("Server response:", res.data);
         if (res.data.insertedId) {
           Swal.fire({
             title: "Redirecting...",
             text: "Redirecting to the payment gateway...",
             icon: "info",
-            timer: 2000,
+            timer: 1000,
             showConfirmButton: false,
-          }).then(() => {
-            // TODP:
-            // Replace with your payment route or logic
-            navigate('/dashboard/myparcels');
           });
+          await logTracking({
+            tracking_id: tracking_id,
+            status: "Parcel Submitted",
+            details: `Parcel created by ${user.displayName}`,
+            location: data.sender_district,
+            updated_by: user?.email || "system",
+          });
+          navigate("/dashboard/myparcels");
         }
         reset();
       });

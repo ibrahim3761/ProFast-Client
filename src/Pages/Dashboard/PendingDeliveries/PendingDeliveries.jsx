@@ -3,11 +3,12 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 import useAuth from "../../../Hooks/useAuth";
+import useTrackingLogger from "../../../Hooks/useTrackingLogger";
 
 const PendingDeliveries = () => {
   const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
-
+  const logTracking = useTrackingLogger();
   const {
     data: parcels = [],
     isLoading,
@@ -38,7 +39,7 @@ const PendingDeliveries = () => {
     },
   });
 
-  const handleStatusChange = (parcelId, newStatus) => {
+  const handleStatusChange = (parcel, newStatus) => {
     const actionLabel =
       newStatus === "in_transit" ? "mark as Picked Up" : "mark as Delivered";
 
@@ -51,7 +52,38 @@ const PendingDeliveries = () => {
       cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
-        mutation.mutate({ parcelId, newStatus });
+        mutation.mutate(
+          { parcelId: parcel._id, newStatus },
+          {
+            onSuccess: async () => {
+              const statusLabel =
+                newStatus === "in_transit" ? "Picked Up" : "Delivered";
+
+              const location =
+                newStatus === "in_transit"
+                  ? parcel.sender_district
+                  : parcel.receiver_district;
+
+              await logTracking({
+                tracking_id: parcel.tracking_id,
+                status: `Parcel ${statusLabel}`,
+                details: `Parcel was marked as ${statusLabel.toLowerCase()} by rider`,
+                location: location || "Unknown",
+                updated_by: user?.email || "rider",
+              });
+
+              Swal.fire(
+                "Success",
+                `Parcel marked as ${statusLabel}`,
+                "success"
+              );
+              refetch();
+            },
+            onError: () => {
+              Swal.fire("Error", "Failed to update parcel status", "error");
+            },
+          }
+        );
       }
     });
   };
@@ -114,10 +146,12 @@ const PendingDeliveries = () => {
                         className="btn btn-sm btn-info"
                         disabled={mutation.isPending}
                         onClick={() =>
-                          handleStatusChange(parcel._id, "in_transit")
+                          handleStatusChange(parcel, "in_transit")
                         }
                       >
-                        {mutation.isPending ? "Updating..." : "Mark as Picked Up"}
+                        {mutation.isPending
+                          ? "Updating..."
+                          : "Mark as Picked Up"}
                       </button>
                     )}
                     {parcel.delivery_status === "in_transit" && (
@@ -125,10 +159,12 @@ const PendingDeliveries = () => {
                         className="btn btn-sm btn-success"
                         disabled={mutation.isPending}
                         onClick={() =>
-                          handleStatusChange(parcel._id, "delivered")
+                          handleStatusChange(parcel, "delivered")
                         }
                       >
-                        {mutation.isPending ? "Updating..." : "Mark as Delivered"}
+                        {mutation.isPending
+                          ? "Updating..."
+                          : "Mark as Delivered"}
                       </button>
                     )}
                   </td>

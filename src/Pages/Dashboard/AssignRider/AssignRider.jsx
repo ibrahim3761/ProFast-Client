@@ -2,14 +2,23 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 import Swal from "sweetalert2";
+import useAuth from "../../../Hooks/useAuth";
+import useTrackingLogger from "../../../Hooks/useTrackingLogger";
 
 const AssignRider = () => {
   const axiosSecure = useAxiosSecure();
   const [selectedParcel, setSelectedParcel] = useState(null);
   const [riders, setRiders] = useState([]);
   const [loadingRiders, setLoadingRiders] = useState(false);
+  const { user } = useAuth();
+  const logTracking = useTrackingLogger();
 
-  const { data: parcels = [], isLoading, isError, refetch } = useQuery({
+  const {
+    data: parcels = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ["unassigned-parcels"],
     queryFn: async () => {
       const res = await axiosSecure.get(
@@ -43,6 +52,15 @@ const AssignRider = () => {
         riderEmail: rider.email,
         riderName: rider.name,
       });
+
+      // ✅ Log tracking
+      await logTracking({
+        tracking_id: selectedParcel.tracking_id,
+        status: "Rider Assigned",
+        details: `Rider ${rider.name} has been assigned`,
+        location: selectedParcel.sender_district,
+        updated_by: user?.email || "admin",
+      });
       Swal.fire("Success", "Rider assigned successfully", "success");
       setSelectedParcel(null);
       refetch();
@@ -64,7 +82,9 @@ const AssignRider = () => {
       {isError && <p className="text-red-500">Failed to load parcels</p>}
 
       {!isLoading && parcels.length === 0 && (
-        <p className="text-gray-500">No parcels available for rider assignment.</p>
+        <p className="text-gray-500">
+          No parcels available for rider assignment.
+        </p>
       )}
 
       {parcels.length > 0 && (

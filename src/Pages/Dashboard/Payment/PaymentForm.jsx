@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 import useAuth from "../../../Hooks/useAuth";
+import useTrackingLogger from "../../../Hooks/useTrackingLogger";
 
 const PaymentForm = () => {
   const stripe = useStripe();
@@ -13,7 +14,8 @@ const PaymentForm = () => {
   const { user } = useAuth();
   const { parcelId } = useParams();
   const axiosSecure = useAxiosSecure();
-  const navigate = useNavigate()
+  const logTracking = useTrackingLogger();
+  const navigate = useNavigate();
 
   const { data: parcelInfo = {}, isPending } = useQuery({
     queryKey: ["parcels", parcelId],
@@ -105,6 +107,14 @@ const PaymentForm = () => {
             timerProgressBar: true,
             toast: true,
             position: "top-end",
+          });
+
+          await logTracking({
+            tracking_id: parcelInfo.tracking_id,
+            status: "payment_done",
+            details: `Parcel Payment Done by ${user.displayName}`,
+            location: parcelInfo.sender_district,
+            updated_by: user?.email || "system",
           });
 
           navigate("/dashboard/myparcels"); // 👈 Immediately redirect
