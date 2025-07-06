@@ -90,6 +90,7 @@ const MyEarnings = () => {
   );
 };
 
+
 const EarningCard = ({ label, amount, color }) => (
   <div className={`bg-${color}-100 p-4 rounded-lg shadow-md`}>
     <h3 className="text-lg font-semibold">{label}</h3>
