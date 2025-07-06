@@ -12,7 +12,8 @@ import {
   MdAdminPanelSettings,
   MdDirectionsBike,
   MdPending,
-  MdDone
+  MdDone,
+  MdAttachMoney,
 } from "react-icons/md";
 import useUserRole from "../Hooks/useUserRole";
 
@@ -96,6 +97,11 @@ const DashboardLayout = () => {
               <li>
                 <NavLink to="/dashboard/completed-deliveries">
                   <MdDone className="inline mr-2" /> Completed Deliveries
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/dashboard/my-earnings">
+                  <MdAttachMoney className="inline mr-2" /> My Earnings
                 </NavLink>
               </li>
             </>
