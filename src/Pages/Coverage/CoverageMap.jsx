@@ -12,7 +12,7 @@ import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
-// Fix marker icon path
+// Fix Leaflet marker paths for build environments
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x,
@@ -20,11 +20,10 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
-// Component to fly to searched district
 const FlyToDistrict = ({ serviceCenters, searchQuery }) => {
   const map = useMap();
 
-   useEffect(() => {
+  useEffect(() => {
     if (!searchQuery) return;
 
     const matched = serviceCenters.find((center) =>
@@ -42,7 +41,7 @@ const FlyToDistrict = ({ serviceCenters, searchQuery }) => {
 };
 
 const CoverageMap = ({ serviceCenters, searchQuery }) => {
-  const position = [23.8103, 90.4125]; // Dhaka center
+  const position = [23.8103, 90.4125]; // Dhaka
 
   return (
     <div className="w-full h-[580px] rounded-xl overflow-hidden shadow">
@@ -57,35 +56,36 @@ const CoverageMap = ({ serviceCenters, searchQuery }) => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {/* Zoom to district when searched */}
+        {/* Zoom on search */}
         <FlyToDistrict
           serviceCenters={serviceCenters}
           searchQuery={searchQuery}
         />
 
-        {/* Show all markers */}
-        {serviceCenters.map((center, index) => (
-          <Marker
-            key={index}
-            position={[center.latitude, center.longitude]}
-            icon={L.icon({
-              iconUrl: markerIcon,
-              iconSize: [25, 41],
-              iconAnchor: [12, 41],
-              popupAnchor: [0, -41],
-            })}
-          >
-            <Popup>
-              <strong>{center.district}</strong>
-              <br />
-              Region: {center.region}
-              <br />
-              City: {center.city}
-              <br />
-              Areas: {center.covered_area.join(", ")}
-            </Popup>
-          </Marker>
-        ))}
+        {/* Render markers */}
+        {Array.isArray(serviceCenters) &&
+          serviceCenters.map((center, index) => (
+            <Marker
+              key={index}
+              position={[center.latitude, center.longitude]}
+              icon={L.icon({
+                iconUrl: markerIcon,
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [0, -41],
+              })}
+            >
+              <Popup>
+                <strong>{center.district}</strong>
+                <br />
+                Region: {center.region}
+                <br />
+                City: {center.city}
+                <br />
+                Areas: {center.covered_area.join(", ")}
+              </Popup>
+            </Marker>
+          ))}
       </MapContainer>
     </div>
   );

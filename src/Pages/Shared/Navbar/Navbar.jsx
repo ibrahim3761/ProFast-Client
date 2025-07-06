@@ -20,7 +20,7 @@ const Navbar = () => {
   <>
     <li>
       <NavLink
-        to="/services"
+        to="/"
         className={({ isActive }) =>
           isActive
             ? "bg-[#CAEB66] text-black font-semibold rounded-full px-4 py-2"

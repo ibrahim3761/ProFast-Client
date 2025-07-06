@@ -23,6 +23,7 @@ import PendingDeliveries from "../Pages/Dashboard/PendingDeliveries/PendingDeliv
 import RiderRoutes from "../Routes/RiderRoutes";
 import CompletedDeliveris from "../Pages/Dashboard/CompletedDeliveries/CompletedDeliveris";
 import MyEarnings from "../Pages/Dashboard/MyEarnings/MyEarnings";
+import DashboardHome from "../Pages/Dashboard/DashboardHome/DashboardHome";
 
 export const router = createBrowserRouter([
   {
@@ -34,14 +35,21 @@ export const router = createBrowserRouter([
         Component: Home,
       },
       {
-        path:"forbidden",
-        Component: Forbidden
+        path: "forbidden",
+        Component: Forbidden,
       },
       {
         path: "coverage",
         Component: Coverage,
-        loader: () => fetch("../../public/serviceCenter.json"),
+        loader: async () => {
+          const response = await fetch("/serviceCenter.json");
+          if (!response.ok) {
+            throw new Error("Failed to fetch service center data.");
+          }
+          return response.json();
+        },
       },
+
       {
         path: "sendParcel",
         element: (
@@ -52,7 +60,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "beARider",
-        element: <PrivateRoutes><BeARider></BeARider></PrivateRoutes>
+        element: (
+          <PrivateRoutes>
+            <BeARider></BeARider>
+          </PrivateRoutes>
+        ),
       },
     ],
   },
@@ -79,6 +91,10 @@ export const router = createBrowserRouter([
     ),
     children: [
       {
+        index: true,
+        Component: DashboardHome,
+      },
+      {
         path: "myparcels",
         Component: MyParcels,
       },
@@ -97,33 +113,61 @@ export const router = createBrowserRouter([
       // admin only routes
       {
         path: "pending-riders",
-        element: <AdminRoutes><PendingRider></PendingRider></AdminRoutes>
+        element: (
+          <AdminRoutes>
+            <PendingRider></PendingRider>
+          </AdminRoutes>
+        ),
       },
       {
         path: "accepted-riders",
-        element: <AdminRoutes><AcceptedRiders></AcceptedRiders></AdminRoutes>
+        element: (
+          <AdminRoutes>
+            <AcceptedRiders></AcceptedRiders>
+          </AdminRoutes>
+        ),
       },
       {
-        path: 'manage-admins',
-        element: <AdminRoutes><ManageAdmins></ManageAdmins></AdminRoutes>
+        path: "manage-admins",
+        element: (
+          <AdminRoutes>
+            <ManageAdmins></ManageAdmins>
+          </AdminRoutes>
+        ),
       },
       {
-        path: 'assign-rider',
-        element: <AdminRoutes><AssignRider></AssignRider></AdminRoutes>
+        path: "assign-rider",
+        element: (
+          <AdminRoutes>
+            <AssignRider></AssignRider>
+          </AdminRoutes>
+        ),
       },
       // rider only routes
       {
-        path: 'pending-deliveries',
-        element: <RiderRoutes><PendingDeliveries></PendingDeliveries></RiderRoutes>
+        path: "pending-deliveries",
+        element: (
+          <RiderRoutes>
+            <PendingDeliveries></PendingDeliveries>
+          </RiderRoutes>
+        ),
       },
       {
-        path: 'completed-deliveries',
-        element: <RiderRoutes><CompletedDeliveris></CompletedDeliveris></RiderRoutes>
+        path: "completed-deliveries",
+        element: (
+          <RiderRoutes>
+            <CompletedDeliveris></CompletedDeliveris>
+          </RiderRoutes>
+        ),
       },
       {
-        path: 'my-earnings',
-        element: <RiderRoutes><MyEarnings></MyEarnings></RiderRoutes>
-      }
+        path: "my-earnings",
+        element: (
+          <RiderRoutes>
+            <MyEarnings></MyEarnings>
+          </RiderRoutes>
+        ),
+      },
     ],
   },
 ]);

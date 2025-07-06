@@ -29,7 +29,7 @@ const Coverage = () => {
         </p>
 
         <CoverageMap
-          serviceCenters={serviceCenters}
+          serviceCenters={Array.isArray(serviceCenters) ? serviceCenters : []}
           searchQuery={searchQuery}
         />
       </div>
