@@ -82,7 +82,7 @@ const Navbar = () => {
         About Us
       </NavLink>
     </li>
-    <li>
+    {/* <li>
       <NavLink
         to="/pricing"
         className={({ isActive }) =>
@@ -93,7 +93,7 @@ const Navbar = () => {
       >
         Pricing
       </NavLink>
-    </li>
+    </li> */}
     <li className="lg:hidden">
       <NavLink
         to="/beARider"
