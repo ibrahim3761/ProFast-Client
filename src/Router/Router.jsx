@@ -24,6 +24,7 @@ import RiderRoutes from "../Routes/RiderRoutes";
 import CompletedDeliveris from "../Pages/Dashboard/CompletedDeliveries/CompletedDeliveris";
 import MyEarnings from "../Pages/Dashboard/MyEarnings/MyEarnings";
 import DashboardHome from "../Pages/Dashboard/DashboardHome/DashboardHome";
+import Pricing from "../Pages/Pricing/Pricing";
 
 export const router = createBrowserRouter([
   {
@@ -49,7 +50,10 @@ export const router = createBrowserRouter([
           return response.json();
         },
       },
-
+      {
+        path: "pricing",
+        Component: Pricing
+      },
       {
         path: "sendParcel",
         element: (
